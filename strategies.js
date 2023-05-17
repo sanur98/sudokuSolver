@@ -43,6 +43,7 @@ function solveNakedPairs() {
     }
     if (Object.keys(stack).length) {
         for (const point of stackPoints) {
+            if(foundPair){break}
             stackPoints = removeFromArray(stackPoints, point);
             const mainCell = stack[point];
             for (const insidePoint of stackPoints) { 
@@ -120,6 +121,7 @@ function solveNakedPairs() {
         stage = 'singles'
         throw 'No Unsolved Naked Pairs'
     } else {
+        stage = 'singles'
         tries = 0;
     }
 }

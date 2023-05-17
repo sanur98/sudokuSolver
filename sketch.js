@@ -92,7 +92,7 @@ function draw() {
   }
   console.log(stage)
   // console.log(pairStack)
-  frameRate(1)
+  frameRate(5)
 }
 function buildPossibilities(cell) {
   const { possibilities, x, y } = cell;
