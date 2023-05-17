@@ -4,6 +4,7 @@ var stage = 'singles';
 var iPair1, iPair2, jPair1, jPair2, pairStack;
 var tries = 0;
 var stopLoop = false;
+var fR = 60;
 sodokuBoard = [];
 pairStack = [];
 
@@ -21,7 +22,8 @@ function setup() {
     }
   };
   initialBoard();
-
+  console.log(selectBox(0));
+  // lastRemainingCell();
 }
 function draw() {
   // noLoop();
@@ -57,6 +59,7 @@ function draw() {
     line(cellWidth * i, 0, cellWidth * i, width)
   }
   if (iNext != undefined) {
+    tries = 0;
     sodokuBoard[iNext][jNext].setValue(numberNext);
     sodokuBoard[iNext][jNext].color = color('green');
   }
@@ -66,6 +69,7 @@ function draw() {
   if (stopLoop){
     noLoop()
   }
+  console.log(tries)
   switch (stage) {
     case 'singles':
       try {
@@ -86,13 +90,21 @@ function draw() {
       }
       // noLoop()
       break
+    case 'lastRemainingCell':
+      try{
+        lastRemainingCell();
+      } catch (e) {
+        console.error(e)
+      }
+      // noLoop();
+      break
     case 'NEXT':
       console.log('Cannot Solve it yet')
       noLoop();
   }
   console.log(stage)
   // console.log(pairStack)
-  frameRate(5)
+  frameRate(fR)
 }
 function buildPossibilities(cell) {
   const { possibilities, x, y } = cell;

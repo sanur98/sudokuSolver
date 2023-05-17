@@ -115,14 +115,135 @@ function solveNakedPairs() {
         }
     }
     if (!foundPair && tries > 1) {
-        stage = 'NEXT'
+        stage = 'lastRemainingCell'
         throw 'No Pairs Found'
     } else if (!foundPair) {
         stage = 'singles'
         throw 'No Unsolved Naked Pairs'
+    } else if(tries>1){
+        stage = 'lastRemainingCell'
     } else {
         stage = 'singles'
-        tries = 0;
+    }
+}
+
+function lastRemainingCell() {
+    var foundTarget = false;
+    for(let i=0;i<9;i++){
+        const selectedBox = selectBox(i);
+        var numberCount ={
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0,
+            6:0,
+            7:0,
+            8:0,
+            9:0
+        };
+        for (const cell of selectedBox){
+            for (const possibility of Object.keys(cell.possibilities)){
+                numberCount[possibility]++
+            }
+        }
+        for (const number of Object.keys(numberCount)){
+            if(numberCount[number] === 1){
+                foundTarget=true;
+                for (const cell of selectedBox){
+                    if (Object.keys(cell.possibilities).includes(number)){
+                        cell.color = color('pink')
+                        iNext = cell.i
+                        jNext = cell.j
+                        numberNext = number
+                        break
+                    }
+                }
+                break
+            }
+        }
+        if(foundTarget){
+            break
+        }
+
+        const selectedRow = selectRow(i);
+        numberCount ={
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0,
+            6:0,
+            7:0,
+            8:0,
+            9:0
+        };
+        for (const cell of selectedRow){
+            for (const possibility of Object.keys(cell.possibilities)){
+                numberCount[possibility]++
+            }
+        }
+        for (const number of Object.keys(numberCount)){
+            if(numberCount[number] === 1){
+                foundTarget=true;
+                for (const cell of selectedRow){
+                    if (Object.keys(cell.possibilities).includes(number)){
+                        cell.color = color('pink')
+                        iNext = cell.i
+                        jNext = cell.j
+                        numberNext = number
+                        break
+                    }
+                }
+                break
+            }
+        }
+        if(foundTarget){
+            break
+        }
+
+        const selectedCol = selectCol(i);
+        numberCount ={
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0,
+            6:0,
+            7:0,
+            8:0,
+            9:0
+        };
+        for (const cell of selectedCol){
+            for (const possibility of Object.keys(cell.possibilities)){
+                numberCount[possibility]++
+            }
+        }
+        for (const number of Object.keys(numberCount)){
+            if(numberCount[number] === 1){
+                foundTarget=true;
+                for (const cell of selectedCol){
+                    if (Object.keys(cell.possibilities).includes(number)){
+                        cell.color = color('pink')
+                        iNext = cell.i
+                        jNext = cell.j
+                        numberNext = number
+                        break
+                    }
+                }
+                break
+            }
+        }
+        if(foundTarget){
+            break
+        }
+    }
+    if(!foundTarget && tries > 1){
+        stage = 'NEXT'
+        throw 'No Last Remaining Cells'
+    } else if (!foundTarget) {
+        stage = 'singles'
+        throw 'No Last Remaining Cells Left'
     }
 }
 
@@ -132,4 +253,40 @@ function removeFromArray(arr, value) {
 function compareArrays(arr1, arr2) {
     return arr1.length === arr2.length &&
         arr1.every((v, i) => v === arr2[i])
+}
+
+function selectBox(sBox){
+    let cells = [];
+    for (let i = 0; i < sodokuBoard.length; i++) {
+        for (let j = 0; j < sodokuBoard[i].length; j++) {
+            if (sodokuBoard[i][j].box === sBox) {
+                cells.push(sodokuBoard[i][j]);
+            }
+        }
+    }
+    return cells
+}
+
+function selectRow(sRow){
+    let cells = [];
+    for (let i = 0; i < sodokuBoard.length; i++) {
+        for (let j = 0; j < sodokuBoard[i].length; j++) {
+            if (sodokuBoard[i][j].j === sRow) {
+                cells.push(sodokuBoard[i][j]);
+            }
+        }
+    }
+    return cells
+}
+
+function selectCol(sCol){
+    let cells = [];
+    for (let i = 0; i < sodokuBoard.length; i++) {
+        for (let j = 0; j < sodokuBoard[i].length; j++) {
+            if (sodokuBoard[i][j].j === sCol) {
+                cells.push(sodokuBoard[i][j]);
+            }
+        }
+    }
+    return cells
 }
