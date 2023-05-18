@@ -76,4 +76,7 @@ class Cell {
             }
         }
     }
+    countPossibilities() {
+        return Object.keys(this._possibilities).length
+    }
 }

@@ -1,12 +1,15 @@
-var testCell, cellWidth, cellHeight, sodokuBoard;
+var testCell, cellWidth, cellHeight, sodokuBoard,singleCellStack,undeterminedCellStack,pairCellStack;
 var iNext, jNext, numberNext, iPrev, jPrev;
 var stage = 'singles';
 var iPair1, iPair2, jPair1, jPair2, pairStack;
 var tries = 0;
 var stopLoop = false;
-var fR = 60;
+var fR = 5;
 sodokuBoard = [];
 pairStack = [];
+undeterminedCellStack = [];
+singleCellStack = [];
+pairCellStack = [];
 
 function setup() {
   width = 500;
@@ -22,8 +25,7 @@ function setup() {
     }
   };
   initialBoard();
-  console.log(selectBox(0));
-  // lastRemainingCell();
+  console.log(selectCol(0));
 }
 function draw() {
   // noLoop();
@@ -69,7 +71,6 @@ function draw() {
   if (stopLoop){
     noLoop()
   }
-  console.log(tries)
   switch (stage) {
     case 'singles':
       try {
@@ -102,6 +103,7 @@ function draw() {
       console.log('Cannot Solve it yet')
       noLoop();
   }
+  console.log(tries)
   console.log(stage)
   // console.log(pairStack)
   frameRate(fR)
