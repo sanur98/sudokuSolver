@@ -1,4 +1,4 @@
-var testCell, cellWidth, cellHeight, sodokuBoard,singleCellStack,undeterminedCellStack,pairCellStack;
+var testCell, cellWidth, cellHeight, sodokuBoard, singleCellStack, undeterminedCellStack, pairCellStack, tripletCellStack;
 var iNext, jNext, numberNext, iPrev, jPrev;
 var stage = 'singles';
 var iPair1, iPair2, jPair1, jPair2, pairStack;
@@ -10,6 +10,7 @@ pairStack = [];
 undeterminedCellStack = [];
 singleCellStack = [];
 pairCellStack = [];
+tripletCellStack = [];
 
 function setup() {
   width = 500;
@@ -68,9 +69,10 @@ function draw() {
   if (determinedCount > 80) {
     noLoop()
   }
-  if (stopLoop){
+  if (stopLoop) {
     noLoop()
   }
+  console.log(stage)
   switch (stage) {
     case 'singles':
       try {
@@ -92,19 +94,24 @@ function draw() {
       // noLoop()
       break
     case 'lastRemainingCell':
-      try{
+      try {
         lastRemainingCell();
       } catch (e) {
         console.error(e)
       }
       // noLoop();
       break
+    case 'triplets':
+      try {
+        solveTriplets()
+      } catch (e) {
+        console.error(e)
+      }
+      break
     case 'NEXT':
       console.log('Cannot Solve it yet')
       noLoop();
   }
-  console.log(tries)
-  console.log(stage)
   // console.log(pairStack)
   frameRate(fR)
 }

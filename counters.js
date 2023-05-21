@@ -68,3 +68,13 @@ function updatePairs(){
         } else {continue}
     }
 }
+
+function updateTriplets(){
+    updateUndetermined();
+    tripletCellStack = []
+    for (const cell of undeterminedCellStack){
+        if(cell.countPossibilities() == 3 && !tripletCellStack.includes(cell)){
+            tripletCellStack.push(cell)
+        } else {continue}
+    }
+}

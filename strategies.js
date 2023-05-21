@@ -1,7 +1,7 @@
 function findSingle() {
     updateSingles();
-    if (singleCellStack.length >= 1){
-        const randomElement = Math.floor(Math.random()*singleCellStack.length)
+    if (singleCellStack.length >= 1) {
+        const randomElement = Math.floor(Math.random() * singleCellStack.length)
         iNext = singleCellStack[randomElement].i
         jNext = singleCellStack[randomElement].j
         const [value] = Object.entries(singleCellStack[randomElement].possibilities)
@@ -34,28 +34,28 @@ function findSingle() {
 function solveNakedPairs() {
     var foundTarget = false;
     updatePairs();
-    if (pairCellStack.length >= 2 && tries<2){
-        for (mainCell of pairCellStack){
-            for (innerCell of pairCellStack){
-                if (mainCell === innerCell){continue}
-                if (compareArrays(Object.keys(mainCell.possibilities),Object.keys(innerCell.possibilities))){
+    if (pairCellStack.length >= 2 && tries < 2) {
+        for (mainCell of pairCellStack) {
+            for (innerCell of pairCellStack) {
+                if (mainCell === innerCell) { continue }
+                if (compareArrays(Object.keys(mainCell.possibilities), Object.keys(innerCell.possibilities))) {
                     mainCell.color = color('yellow')
                     innerCell.color = color('yellow')
-                    var arr=[];
-                    if (mainCell.box === innerCell.box){
+                    var arr = [];
+                    if (mainCell.box === innerCell.box) {
                         arr = arr.concat(selectBox(mainCell.box))
                     }
-                    if (mainCell.i === innerCell.i){
+                    if (mainCell.i === innerCell.i) {
                         arr = arr.concat(selectCol(mainCell.i))
                     }
-                    else if (mainCell.j === innerCell.j){
+                    else if (mainCell.j === innerCell.j) {
                         arr = arr.concat(selectRow(mainCell.j))
                     }
-                    for (const cell of arr){
-                        if(cell === mainCell || cell === innerCell){continue}
+                    for (const cell of arr) {
+                        if (cell === mainCell || cell === innerCell) { continue }
                         cell.color = color('red')
-                        for (const possibility of Object.keys(cell.possibilities)){
-                            if (Object.keys(mainCell.possibilities).includes(possibility) ){
+                        for (const possibility of Object.keys(cell.possibilities)) {
+                            if (Object.keys(mainCell.possibilities).includes(possibility)) {
                                 cell.removePossibility(possibility)
                             }
                         }
@@ -65,15 +65,76 @@ function solveNakedPairs() {
                     break
                 }
             }
-            if(foundTarget){break}
+            if (foundTarget) { break }
         }
-        if(!foundTarget){
-            stage = 'lastRemainingCell'
+        if (!foundTarget) {
+            stage = 'triplets'
             throw 'No Naked Pairs Found'
         }
     } else {
-        stage = 'lastRemainingCell'
+        stage = 'triplets'
         throw 'Not enough pairs found'
+    }
+}
+
+function solveTriplets() {
+    var foundTarget = false;
+    updateTriplets();
+    console.log(tries)
+    if (tripletCellStack.length >= 3 && tries < 2) {
+        var madeChange = false
+        for (mainCell of tripletCellStack) {
+            for (middleCell of tripletCellStack) {
+                for(innerCell of tripletCellStack){
+                    if (mainCell === middleCell || mainCell === innerCell || innerCell === middleCell){continue}
+                    var arr = [];
+                    const mainP = Object.keys(mainCell.possibilities)
+                    const middleP = Object.keys(middleCell.possibilities)
+                    const innerP = Object.keys(innerCell.possibilities)
+                    var match = false
+                    if (mainCell.box===middleCell.box&&mainCell.box===innerCell.box){
+                        match = true
+                        arr = arr.concat(selectBox(mainCell.box))
+                    }
+                    if (mainCell.j===middleCell.j&&mainCell.j===innerCell.j){
+                        match = true
+                        arr = arr.concat(selectRow(mainCell.j))
+                    }
+                    if (mainCell.i===middleCell.i&&mainCell.i===innerCell.i){
+                        match = true
+                        arr = arr.concat(selectCol(mainCell.i))
+                    }
+                    if(!match){continue}
+                    if (compareArrays(mainP,innerP)&&compareArrays(innerP,middleP)){
+                        arr = arr.filter(e=>e!==mainCell)
+                        arr = arr.filter(e=>e!==innerCell)
+                        arr = arr.filter(e=>e!==middleCell)
+                        for (cell of arr){
+                            for (const possibility of Object.keys(mainCell.possibilities)){
+                                if(cell.removePossibility(possibility)){
+                                    cell.color = color('red')
+                                    mainCell.color = color('yellow')
+                                    middleCell.color = color('yellow')
+                                    innerCell.color = color('yellow')
+                                    console.log('Made Change')
+                                    madeChange=true
+                                    foundTarget=true
+                                }
+                            }
+                        }
+                    }
+                    if(foundTarget){break}
+                }
+                if(foundTarget){break}
+            }
+            if(foundTarget){break}
+        }
+        if(foundTarget){
+            stage = 'singles'
+        }
+    } else {
+        stage = 'lastRemainingCell'
+        throw 'Not Enough Triplets'
     }
 }
 
@@ -186,29 +247,29 @@ function solveNakedPairs() {
 
 function lastRemainingCell() {
     var foundTarget = false;
-    for(let i=0;i<9;i++){
+    for (let i = 0; i < 9; i++) {
         const selectedBox = selectBox(i);
-        var numberCount ={
-            1:0,
-            2:0,
-            3:0,
-            4:0,
-            5:0,
-            6:0,
-            7:0,
-            8:0,
-            9:0
+        var numberCount = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0
         };
-        for (const cell of selectedBox){
-            for (const possibility of Object.keys(cell.possibilities)){
+        for (const cell of selectedBox) {
+            for (const possibility of Object.keys(cell.possibilities)) {
                 numberCount[possibility]++
             }
         }
-        for (const number of Object.keys(numberCount)){
-            if(numberCount[number] === 1){
-                foundTarget=true;
-                for (const cell of selectedBox){
-                    if (Object.keys(cell.possibilities).includes(number)){
+        for (const number of Object.keys(numberCount)) {
+            if (numberCount[number] === 1) {
+                foundTarget = true;
+                for (const cell of selectedBox) {
+                    if (Object.keys(cell.possibilities).includes(number)) {
                         cell.color = color('pink')
                         iNext = cell.i
                         jNext = cell.j
@@ -219,32 +280,32 @@ function lastRemainingCell() {
                 break
             }
         }
-        if(foundTarget){
+        if (foundTarget) {
             break
         }
 
         const selectedRow = selectRow(i);
-        numberCount ={
-            1:0,
-            2:0,
-            3:0,
-            4:0,
-            5:0,
-            6:0,
-            7:0,
-            8:0,
-            9:0
+        numberCount = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0
         };
-        for (const cell of selectedRow){
-            for (const possibility of Object.keys(cell.possibilities)){
+        for (const cell of selectedRow) {
+            for (const possibility of Object.keys(cell.possibilities)) {
                 numberCount[possibility]++
             }
         }
-        for (const number of Object.keys(numberCount)){
-            if(numberCount[number] === 1){
-                foundTarget=true;
-                for (const cell of selectedRow){
-                    if (Object.keys(cell.possibilities).includes(number)){
+        for (const number of Object.keys(numberCount)) {
+            if (numberCount[number] === 1) {
+                foundTarget = true;
+                for (const cell of selectedRow) {
+                    if (Object.keys(cell.possibilities).includes(number)) {
                         cell.color = color('pink')
                         iNext = cell.i
                         jNext = cell.j
@@ -255,32 +316,32 @@ function lastRemainingCell() {
                 break
             }
         }
-        if(foundTarget){
+        if (foundTarget) {
             break
         }
 
         const selectedCol = selectCol(i);
-        numberCount ={
-            1:0,
-            2:0,
-            3:0,
-            4:0,
-            5:0,
-            6:0,
-            7:0,
-            8:0,
-            9:0
+        numberCount = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0
         };
-        for (const cell of selectedCol){
-            for (const possibility of Object.keys(cell.possibilities)){
+        for (const cell of selectedCol) {
+            for (const possibility of Object.keys(cell.possibilities)) {
                 numberCount[possibility]++
             }
         }
-        for (const number of Object.keys(numberCount)){
-            if(numberCount[number] === 1){
-                foundTarget=true;
-                for (const cell of selectedCol){
-                    if (Object.keys(cell.possibilities).includes(number)){
+        for (const number of Object.keys(numberCount)) {
+            if (numberCount[number] === 1) {
+                foundTarget = true;
+                for (const cell of selectedCol) {
+                    if (Object.keys(cell.possibilities).includes(number)) {
                         cell.color = color('pink')
                         iNext = cell.i
                         jNext = cell.j
@@ -291,11 +352,11 @@ function lastRemainingCell() {
                 break
             }
         }
-        if(foundTarget){
+        if (foundTarget) {
             break
         }
     }
-    if(!foundTarget && tries > 1){
+    if (!foundTarget && tries > 1) {
         stage = 'NEXT'
         throw 'No Last Remaining Cells'
     } else if (!foundTarget) {

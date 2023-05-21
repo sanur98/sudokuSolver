@@ -59,6 +59,9 @@ class Cell {
     removePossibility(number) {
         if (Object.keys(this._possibilities).includes(number)) {
             delete this._possibilities[number];
+            return true
+        } else {
+            return false
         }
     }
     setValue(number) {
